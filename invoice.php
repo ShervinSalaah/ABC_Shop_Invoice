@@ -24,64 +24,83 @@ $totalDiscount = 0;
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Invoice </title>
+  <title>Invoice</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  
 
-<h2> <?php echo $shop; ?> -Invoice</h2>
+<div class="invoice-box">
+
+<h2><centre><?php echo $shop; ?> – Invoice </centre></h2>
+
 <p><strong>Address:</strong> <?php echo $address; ?></p>
 <p><strong>Contact:</strong> <?php echo $contact; ?></p>
 <p><strong>Email:</strong> <?php echo $email; ?></p>
 
-<table  cellpadding="5">
+
+<h3 class="section-title">Purchased Items</h3>
+
+<table cellpadding="5">
 <tr>
   <th>Item Code</th>
   <th>Item Name</th>
   <th>Quantity</th>
-  <th>Total Price</th>
+  <th>Unit Price (Rs.)</th>
+  <th>Total Price (Rs.)</th>
+  <th>Discount (Rs.)</th>
 </tr>
 
 <?php
 for ($i = 0; $i < count($itemcode); $i++) {
 
-    if ($quantity[$i] == "" || $unitprice[$i] == "") continue;
+    if ($quantity[$i] === "" || $unitprice[$i] === "") continue;
 
+    $code = test_input($itemcode[$i]);
+    $name = test_input($itemname[$i]);
     $qty = (int)$quantity[$i];
     $price = (float)$unitprice[$i];
+
     $total = $qty * $price;
     $discount = 0;
 
-    // Discount rules
+    // Discount Rules ------------------------------------
     if ($qty > 10 && $qty < 21) {
-        $discount = $total / 50;
+        $discount = $total / 50; // 2%
     }
     elseif ($qty > 20 && $qty < 51) {
-        $discount = $total / 10;
+        $discount = $total / 10; // 10%
     }
     elseif ($qty > 50) {
-        $free = intval($qty / 30) * $price * 5; 
-        $discount = $free;
+        // 1 free item per 30 purchased → multiplied by item price
+        $freeItemsValue = intval($qty / 30) * $price;
+        $discount = $freeItemsValue;
     }
+    // -----------------------------------------------------
 
     $grandTotal += $total;
     $totalDiscount += $discount;
 
-    echo "<tr>
-            <td>{$itemcode[$i]}</td>
-            <td>{$itemname[$i]}</td>
-            <td>{$qty}</td>
-            <td>{$total}</td>
-          </tr>";
+    echo "
+    <tr>
+        <td>$code</td>
+        <td>$name</td>
+        <td>$qty</td>
+        <td>$price</td>
+        <td>$total</td>
+        <td>$discount</td>
+    </tr>";
 }
 ?>
 
 </table>
 
+<div class="invoice-summary">
+    <p><strong>Grand Total:</strong> Rs. <?php echo number_format($grandTotal, 2); ?></p><br>
+    <p><strong>Total Discount:</strong> Rs. <?php echo number_format($totalDiscount, 2); ?></p><br>
+    <p><strong>Net Payable:</strong> Rs. <?php echo number_format(($grandTotal - $totalDiscount), 2); ?></p>
+</div>
 
-<p><strong>Grand Total:</strong> Rs. <?php echo $grandTotal; ?></p>
-<p><strong>Total Discount:</strong> Rs. <?php echo $totalDiscount; ?></p>
-<p><strong>Net Payable:</strong> Rs. <?php echo $grandTotal - $totalDiscount; ?></p>
+</div>
 
 </body>
 </html>

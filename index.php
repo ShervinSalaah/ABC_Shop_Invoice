@@ -2,9 +2,7 @@
 session_start();
 
 function test_input($data){
-    $data = trim($data);
-    $data = stripslashes($data);
-    return htmlspecialchars($data);
+    return htmlspecialchars(stripslashes(trim($data)));
 }
 
 $values = [
@@ -27,27 +25,32 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+  <title>Create Invoice</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  
+
+<div class="container">
+
 <form method="post" action="invoice.php">
 
-<h2>Shop Information</h2>
+<h3 class="section-title">Shop Information</h3>
 
 <label>Shop Name:</label>
-<input type="text" name="shop" value="<?php echo $values['shop']; ?>"><br>
+<input type="text" name="shop" value="<?php echo $values['shop']; ?>">
 
 <label>Address:</label>
-<input type="text" name="address" value="<?php echo $values['address']; ?>"><br>
+<input type="text" name="address" value="<?php echo $values['address']; ?>">
 
 <label>Contact:</label>
-<input type="text" name="contact" value="<?php echo $values['contact']; ?>"><br>
+<input type="text" name="contact" value="<?php echo $values['contact']; ?>">
 
 <label>Email:</label>
-<input type="email" name="email" value="<?php echo $values['email']; ?>"><br>
+<input type="email" name="email" value="<?php echo $values['email']; ?>">
 
-<table  cellpadding="5">
+<h3 class="section-title">Items</h3>
+
+<table id="itemsTable">
 <tr>
   <th>Item Code</th>
   <th>Item Name</th>
@@ -55,22 +58,39 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
   <th>Unit Price</th>
 </tr>
 
-<?php for($i=0; $i<3; $i++) { ?>
 <tr>
   <td><input type="text" name="itemcode[]"></td>
   <td><input type="text" name="itemname[]"></td>
   <td><input type="number" name="quantity[]"></td>
   <td><input type="number" name="unitprice[]"></td>
 </tr>
-<?php } ?>
 
 </table>
 
-<br>
-<button type="submit">Submit</button>
-<button type="reset">Clear</button>
+<button type="button" class="add-btn" onclick="addRow()">+ Add More</button>
+<br><br>
+
+<button type="submit" class="submit-btn">Submit</button>
+<button type="reset" class="reset-btn">Clear</button>
 
 </form>
+
+</div>
+
+<!-- JS to add more rows -->
+<script>
+function addRow() {
+    let table = document.getElementById("itemsTable");
+    let row = table.insertRow(-1);
+
+    row.innerHTML = `
+        <td><input type="text" name="itemcode[]"></td>
+        <td><input type="text" name="itemname[]"></td>
+        <td><input type="number" name="quantity[]"></td>
+        <td><input type="number" name="unitprice[]"></td>
+    `;
+}
+</script>
 
 </body>
 </html>
